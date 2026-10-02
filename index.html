@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What is Credit Risk? The Fundamental Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2128; --ink-2:#3a424d; --muted:#6b7480; --rule:#d9dde2;
+  --paper:#ffffff; --panel:#f4f6f8;
+  --amber:#e0a526; --amber-soft:#fbefcf;
+  --teal:#1f7a7a; --teal-soft:#dcefee;
+  --rust:#b4532a; --rust-soft:#f6e1d6;
+  --slate:#44546a; --slate-soft:#e5e9ef;
+  --plum:#6b3fa0;
+  --mast:#161b22;
+  --serif:'Spectral', Georgia, 'Times New Roman', serif;
+  --mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e7eaee; --ink-2:#c3c9d1; --muted:#949ca7; --rule:#333a44;
+    --paper:#11151a; --panel:#1a2028;
+    --amber-soft:#3a3020; --teal-soft:#16302f; --rust-soft:#3a2219; --slate-soft:#232b36;
+    --mast:#0a0d11;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e7eaee; --ink-2:#c3c9d1; --muted:#949ca7; --rule:#333a44;
+  --paper:#11151a; --panel:#1a2028;
+  --amber-soft:#3a3020; --teal-soft:#16302f; --rust-soft:#3a2219; --slate-soft:#232b36;
+  --mast:#0a0d11;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.13rem;line-height:1.6}
+img{max-width:100%}
+
+/* ---------- masthead ---------- */
+.mast{background:var(--mast);color:#f3f4f6;position:relative;overflow:hidden}
+.mast::before{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(135deg, rgba(224,165,38,.16) 0 2px, transparent 2px 14px);
+  -webkit-mask-image:linear-gradient(90deg,transparent 35%,#000 100%);mask-image:linear-gradient(90deg,transparent 35%,#000 100%)}
+.mast-inner{position:relative;max-width:1080px;margin:0 auto;padding:3.2rem 1.25rem 2.6rem}
+.mast .course{font-family:var(--mono);font-size:.82rem;color:var(--amber);letter-spacing:.02em;margin:0 0 .9rem}
+.mast h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.08;margin:0;max-width:17ch}
+.mast h1 span{display:block;font-weight:400;font-style:italic;color:#d6dae0}
+.mast .by{font-family:var(--mono);font-size:.82rem;color:#aab2bd;margin:1.4rem 0 0}
+
+/* ---------- nav ---------- */
+nav.toc{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--rule);
+  padding-top:env(safe-area-inset-top,0px)}
+.toc-inner{max-width:1080px;margin:0 auto;display:flex;gap:.35rem;overflow-x:auto;padding:.6rem 1.25rem;scrollbar-width:thin}
+.toc button{flex:0 0 auto;font-family:var(--mono);font-size:.78rem;background:transparent;color:var(--ink-2);
+  border:1px solid var(--rule);border-radius:999px;padding:.38rem .8rem;cursor:pointer;white-space:nowrap}
+.toc button:hover{border-color:var(--teal);color:var(--teal)}
+.toc button.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.toc button:focus-visible,.theme:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* ---------- sections ---------- */
+main{max-width:1080px;margin:0 auto;padding:0 1.25rem 3rem}
+section{padding:2.6rem 0 1.6rem;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:none}
+.sec-head{display:flex;align-items:baseline;gap:.9rem;margin-bottom:1.4rem}
+.sec-num{font-family:var(--mono);font-size:.8rem;color:var(--rust);flex:0 0 auto;min-width:2ch}
+h2{font-family:var(--serif);font-weight:700;font-size:clamp(1.45rem,3.6vw,2rem);line-height:1.2;margin:0}
+p{margin:0 0 1rem}
+ul{margin:0;padding-left:1.25rem}
+li{margin:.25rem 0}
+li ul{list-style:"➢  ";padding-left:1.3rem}
+mark{background:var(--amber-soft);color:inherit;padding:0 .12em;border-radius:2px;box-shadow:inset 0 -2px 0 var(--amber)}
+
+/* ---------- 2: why credit risk arises ---------- */
+.arise{display:grid;grid-template-columns:2fr 1fr;gap:0}
+.arise .side{padding:0 1.2rem;text-align:center}
+.arise .side + .side{border-left:2px dashed var(--rust)}
+.arise h3{font-family:var(--serif);font-size:1.4rem;margin:0 0 1rem}
+.arise .fraud h3{color:var(--muted)}
+.arise .fraud .note{font-style:italic;color:var(--muted);font-size:1.25rem;line-height:1.35;margin:0 0 1.2rem}
+.node{display:flex;align-items:center;justify-content:center;text-align:center;border-radius:50%;
+  width:min(190px,44vw);aspect-ratio:1;margin:0 auto;padding:1.1rem;font-weight:600;font-size:1.02rem;line-height:1.3}
+.node.top{background:#4472c4;color:#fff}
+.node.gold{background:#f2b705;color:#13254d}
+.node.plum{background:var(--plum);color:#fff}
+.node.grey{background:var(--slate-soft);color:var(--muted);border:1.5px solid var(--rule)}
+.tree-svg{display:block;width:60%;max-width:300px;height:44px;margin:.2rem auto}
+.tree-kids{display:flex;justify-content:space-around;gap:1rem}
+
+/* ---------- 3: individual vs institutional ---------- */
+.iv{display:grid;gap:1.2rem}
+.iv-row{display:grid;grid-template-columns:minmax(150px,240px) 1fr;align-items:stretch}
+.iv-label{border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-weight:700;font-size:1.3rem;line-height:1.25;padding:1.2rem;color:#fff;position:relative;z-index:1}
+.iv-body{margin-left:-14px;padding:1.1rem 3.2rem 1.1rem 2rem;display:flex;align-items:center;
+  clip-path:polygon(0 0,calc(100% - 2.4rem) 0,100% 50%,calc(100% - 2.4rem) 100%,0 100%)}
+.iv-row.a .iv-label{background:var(--teal)} .iv-row.a .iv-body{background:var(--teal-soft)}
+.iv-row.b .iv-label{background:var(--rust)} .iv-row.b .iv-body{background:var(--rust-soft)}
+
+/* ---------- 4: significance ---------- */
+.sig{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.card{border-radius:6px;overflow:hidden;background:var(--panel);display:flex;flex-direction:column}
+.card h3{margin:0;padding:.85rem 1rem;font-size:1.05rem;line-height:1.3;color:#fff;font-weight:600;min-height:4.2rem;display:flex;align-items:center}
+.card .body{padding:1rem 1.1rem 1.2rem;font-size:1.05rem}
+.c1 h3{background:var(--teal)} .c1{background:var(--teal-soft)}
+.c2 h3{background:var(--rust)} .c2{background:var(--rust-soft)}
+.c3 h3{background:#9a7414} .c3{background:var(--amber-soft)}
+.c4 h3{background:var(--slate)} .c4{background:var(--slate-soft)}
+
+/* ---------- 5: 5 Cs ---------- */
+.fivec{display:grid;grid-template-columns:1fr 1.2fr;align-items:center;gap:0;max-width:760px}
+.pyr{aspect-ratio:1/0.95;background:linear-gradient(180deg,var(--teal) 0%,#5aa5a5 100%);
+  clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.85}
+.cs{list-style:none;padding:0;margin:0 0 0 -32%;display:grid;gap:.6rem;position:relative}
+.cs li{margin:0;background:var(--paper);border:1.5px solid var(--teal);border-radius:8px;
+  padding:.7rem 1rem;text-align:center;font-weight:700;font-size:1.3rem}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:1rem;line-height:1.4}
+th,td{padding:.7rem .85rem;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);vertical-align:middle;text-align:left}
+th:last-child,td:last-child{border-right:none}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:none}
+thead th{color:#fff;font-weight:600;font-size:1rem}
+tbody th{font-weight:700}
+.t-rust thead th{background:var(--rust)} .t-rust tbody th{background:var(--rust-soft)}
+.t-teal thead th{background:var(--teal)} .t-teal tbody th{background:var(--teal-soft);color:var(--teal)}
+.t-slate thead th{background:var(--slate)} .t-slate tbody th{background:var(--slate-soft)}
+.banks{min-width:860px}
+.banks tbody th,.banks thead th:first-child{position:sticky;left:0;z-index:1}
+.banks thead th:first-child{background:var(--rust)}
+.banks td{text-align:center}
+.fraud-t{min-width:640px} .aml-t{min-width:600px}
+.callout{font-weight:700;color:var(--ink);margin:1.1rem 0 0;padding:.9rem 1.1rem;background:var(--panel);border-radius:6px}
+.scroll-hint{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin:.5rem 0 0;display:none}
+
+/* ---------- 8: AML bullets ---------- */
+.aml-points{margin-bottom:1.5rem}
+.aml-points li{margin:.5rem 0}
+
+/* ---------- 9: lifecycle ---------- */
+.flow{display:flex;list-style:none;padding:0;margin:1rem 0}
+.flow li{flex:1 1 0;margin:0 0 0 -14px;background:var(--teal);color:#fff;font-weight:600;font-size:1.02rem;line-height:1.25;
+  min-height:110px;display:flex;align-items:center;justify-content:center;text-align:center;padding:.6rem 1.6rem .6rem 2rem;
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%,22px 50%)}
+.flow li:first-child{margin-left:0;padding-left:1rem;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%)}
+.flow li:nth-child(even){background:#2a8e8e}
+
+/* ---------- 10: questions ---------- */
+.qs{display:grid;gap:1rem}
+.q{display:grid;grid-template-columns:minmax(150px,240px) 1fr;border-radius:10px;overflow:hidden;background:var(--panel)}
+.q h3{margin:0;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.2rem;padding:1rem}
+.q ul{padding:1rem 1.2rem 1rem 2.4rem;align-self:center}
+.q:nth-child(1) h3{background:var(--teal)} .q:nth-child(1){background:var(--teal-soft)}
+.q:nth-child(2) h3{background:var(--rust)} .q:nth-child(2){background:var(--rust-soft)}
+.q:nth-child(3) h3{background:#9a7414} .q:nth-child(3){background:var(--amber-soft)}
+.q:nth-child(4) h3{background:var(--slate)} .q:nth-child(4){background:var(--slate-soft)}
+
+footer{border-top:1px solid var(--rule);max-width:1080px;margin:0 auto;padding:1.2rem 1.25rem 2rem;
+  font-family:var(--mono);font-size:.76rem;color:var(--muted);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.theme{font-family:var(--mono);font-size:.74rem;background:transparent;color:var(--muted);border:1px solid var(--rule);border-radius:999px;padding:.25rem .7rem;cursor:pointer}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .sig{grid-template-columns:1fr 1fr}
+  .flow{flex-direction:column;gap:6px}
+  .flow li,.flow li:first-child{margin:0;min-height:0;padding:1rem 1rem 1.6rem;
+    clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),50% 100%,0 calc(100% - 14px))}
+  .scroll-hint{display:block}
+}
+@media (max-width:640px){
+  body{font-size:1.06rem}
+  .mast-inner{padding:2.4rem 1.1rem 2rem}
+  main{padding:0 1.1rem 2.4rem}
+  .arise{grid-template-columns:1fr}
+  .arise .side{padding:0}
+  .arise .side + .side{border-left:none;border-top:2px dashed var(--rust);margin-top:1.6rem;padding-top:1.4rem}
+  .node{font-size:.95rem;width:min(170px,42vw)}
+  .iv-row,.q{grid-template-columns:1fr}
+  .iv-body{margin:-10px 0 0;padding:1.4rem 1.2rem 2.4rem;
+    clip-path:polygon(0 0,100% 0,100% calc(100% - 1.4rem),50% 100%,0 calc(100% - 1.4rem))}
+  .iv-label{font-size:1.2rem}
+  .sig{grid-template-columns:1fr}
+  .card h3{min-height:0}
+  .fivec{grid-template-columns:1fr}
+  .pyr{display:none}
+  .cs{margin:0}
+  .q h3{justify-content:flex-start;padding:.8rem 1.1rem}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="mast-inner">
+    <p class="course">Financial Risk Analytics · Credit Risk</p>
+    <h1>What is Credit Risk?<span>…The fundamental concept</span></h1>
+    <p class="by">Prof. Priyadarshi Dutta</p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="toc-inner" id="toc">
+    <button type="button" data-target="s2">Why it arises</button>
+    <button type="button" data-target="s3">Individual vs Institutional</button>
+    <button type="button" data-target="s4">Significance</button>
+    <button type="button" data-target="s5">5 Cs</button>
+    <button type="button" data-target="s6">Types of Banks</button>
+    <button type="button" data-target="s7">Fraud Risk</button>
+    <button type="button" data-target="s8">AML</button>
+    <button type="button" data-target="s9">Credit Lifecycle</button>
+    <button type="button" data-target="s10">Questions by stage</button>
+  </div>
+</nav>
+
+<main>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Why does Credit Risk arise?</h2></div>
+  <div class="arise">
+    <div class="side">
+      <h3>Credit Risk</h3>
+      <div class="node top">Deals with Ability to Pay Issue on part of the borrower</div>
+      <svg class="tree-svg" viewBox="0 0 300 44" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="150" y1="0" x2="40" y2="44" stroke="#4472c4" stroke-width="2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"/>
+        <line x1="150" y1="0" x2="260" y2="44" stroke="#4472c4" stroke-width="2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div class="tree-kids">
+        <div class="node gold">Change in financial condition of the borrower over time</div>
+        <div class="node plum">Incorrect Ability to Pay assessment by the lender at the time of Underwriting</div>
+      </div>
+    </div>
+    <div class="side fraud">
+      <h3>Fraud Risk</h3>
+      <p class="note">Usually forms part of Operational Risk</p>
+      <div class="node grey">Willingness to Pay Issue on part of the borrower</div>
+    </div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Individual vs Institutional Credit Risk</h2></div>
+  <div class="iv">
+    <div class="iv-row a">
+      <div class="iv-label">Individual Credit Risk</div>
+      <div class="iv-body"><ul>
+        <li>Lending to a person</li>
+        <li>E.g. of Credit Risk Indicator: CIBIL score of the person</li>
+      </ul></div>
+    </div>
+    <div class="iv-row b">
+      <div class="iv-label">Institutional Credit Risk</div>
+      <div class="iv-body"><ul>
+        <li>Lending to a company or institution</li>
+        <li>E.g. of Credit Risk Indicator: ICRA or CRISIL Rating of a company</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Significance of Credit Risk</h2></div>
+  <div class="sig">
+    <div class="card c1"><h3>Profitability of Lender</h3><div class="body"><ul>
+      <li>P &amp; L impact<ul><li>Write Offs</li><li>Provisions</li></ul></li>
+    </ul></div></div>
+    <div class="card c2"><h3>Regulatory Requirements</h3><div class="body"><ul>
+      <li>Meet Capital Requirements</li>
+      <li>Need to estimate Credit Losses for accurate Capital related calculations</li>
+    </ul></div></div>
+    <div class="card c3"><h3>Pricing of products to optimize Risk Return Trade Off</h3><div class="body"><ul>
+      <li>Risk based pricing strategy i.e., higher risk segments should be priced higher to hedge against the incremental risk</li>
+    </ul></div></div>
+    <div class="card c4"><h3>Ability to raise Capital</h3><div class="body"><ul>
+      <li>Well managed Credit Risk helps in raising capital (more investors, better rates, ratings)</li>
+    </ul></div></div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>5 Cs of Credit Risk Management</h2></div>
+  <div class="fivec">
+    <div class="pyr" aria-hidden="true"></div>
+    <ul class="cs">
+      <li>Character</li><li>Capacity</li><li>Capital</li><li>Collateral</li><li>Conditions</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Types of Banks in India</h2></div>
+  <div class="tbl-wrap">
+    <table class="banks t-rust">
+      <thead><tr>
+        <th scope="col">Feature</th><th scope="col">Regional Rural Banks (RRBs)</th><th scope="col">Small Finance Banks (SFBs)</th><th scope="col">Private Banks</th><th scope="col">Public Sector Undertaking Banks (PSUs)</th>
+      </tr></thead>
+      <tbody>
+        <tr><th scope="row">Ownership</th><td>Government-owned (Central, State, and <mark>Sponsor Bank</mark>)</td><td>Privately owned, but with a <mark>focus on financial inclusion</mark></td><td>Privately owned by individuals or corporations</td><td>Government-owned</td></tr>
+        <tr><th scope="row">Target Audience</th><td><mark>Rural and semi-urban populations</mark></td><td><mark>Underserved sectors including small businesses and low-income households</mark></td><td>General public across all demographics</td><td>General public, with a focus on various sectors</td></tr>
+        <tr><th scope="row">Purpose</th><td>Provide credit and banking services to <mark>rural areas</mark></td><td>Promote <mark>financial inclusion</mark> through <mark>small loans</mark></td><td>Profit-driven banking services</td><td>Serve national interests and promote economic growth</td></tr>
+        <tr><th scope="row">Regulatory Body</th><td>RBI and <mark>NABARD</mark></td><td>RBI</td><td>RBI</td><td>RBI</td></tr>
+        <tr><th scope="row">Loan Size</th><td><mark>Generally smaller loans for agriculture and rural development</mark></td><td><mark>Small loans, typically up to ₹25 lakh</mark></td><td>Varies widely; can offer large loans</td><td>Varies widely; offers a range of loan products</td></tr>
+        <tr><th scope="row">Examples</th><td>Prathama U.P. Gramin Bank: Spnsor Bank is PNB</td><td>Ujjivan Small Finance Bank</td><td>HDFC Bank</td><td>State Bank of India</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">Swipe the table sideways to see all columns.</p>
+  <p class="callout">Role of Sponsor Bank: Partners with Regional Rural Banks (RRBs) to provide them with essential support in areas such as Equity Participation, Training &amp; Support, Compliance &amp; Oversight, Financial Assistance</p>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Overview on Fraud Risk (Mostly part of Ops Risk)</h2></div>
+  <div class="tbl-wrap">
+    <table class="fraud-t t-teal">
+      <thead><tr><th scope="col">Type of Fraud</th><th scope="col">Description</th><th scope="col">Example</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Identity Theft</th><td>Using someone else's identity to apply for a loan.</td><td>A fraudster uses stolen ID details to secure a loan in another person's name.</td></tr>
+        <tr><th scope="row">Synthetic Identity Fraud</th><td>Creating a fake identity by combining real and fabricated information.</td><td>Using a real Social Security number with a fake name and address to secure a loan.</td></tr>
+        <tr><th scope="row">Loan Stacking</th><td>Applying for multiple loans across different lenders simultaneously before the credit bureau updates the outstanding loan details.</td><td>Taking out five different loans from various apps in a single day, bypassing immediate detection.</td></tr>
+        <tr><th scope="row">Application Fraud</th><td>Providing false information on the loan application, such as fake employment details or altered bank statements.</td><td>Submitting a forged bank statement showing a higher income than actual.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">Swipe the table sideways to see all columns.</p>
+</section>
+
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Overview on AML (Mostly part of Compliance Risk)</h2></div>
+  <ul class="aml-points">
+    <li><strong>Anti-Money Laundering (AML)</strong> refers to a set of policies, regulations, and procedures that financial institutions and other regulated entities implement to prevent, detect, and report activities that aim to disguise illegally obtained funds as legitimate income</li>
+    <li>Objective is to combat aspects like Terrorist Financing and different types of illegal activities. KYC is an important aspect of AML Strategy</li>
+  </ul>
+  <div class="tbl-wrap">
+    <table class="aml-t t-slate">
+      <thead><tr><th scope="col">Stage</th><th scope="col">Description</th><th scope="col">Example</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Placement</th><td>Illicit funds are introduced into the financial system.</td><td>A drug dealer deposits small amounts of cash into multiple bank accounts to avoid detection.</td></tr>
+        <tr><th scope="row">Layering</th><td>The money is moved through complex transactions to obscure its origin.</td><td>Transferring money through shell companies or using cryptocurrencies to hide the source.</td></tr>
+        <tr><th scope="row">Integration</th><td>"Cleaned" money is reintroduced into the legitimate economy as lawful income.</td><td>Purchasing luxury real estate or investing in a business to legitimize the illicit funds.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">Swipe the table sideways to see all columns.</p>
+</section>
+
+<section id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Credit Lifecycle Process Overview</h2></div>
+  <ol class="flow">
+    <li>Acquisition</li><li>Underwriting</li><li>Customer Onboarding</li><li>Customer Management</li><li>Collections &amp; Recovery</li><li>Account Closure</li>
+  </ol>
+</section>
+
+<section id="s10">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Examples of Credit Risk Questions at different stages</h2></div>
+  <div class="qs">
+    <div class="q"><h3>Acquisition</h3><ul>
+      <li>Are some acquisition channels inherently bringing in high risk customers? (e.g. Direct Selling Agents)</li>
+    </ul></div>
+    <div class="q"><h3>Underwriting</h3><ul>
+      <li>Are rules and scores approving disproportionately higher volume of risky customers?</li>
+      <li>Is the loan assignment framework allocating higher loan compared to the credit worthiness of the customer?</li>
+    </ul></div>
+    <div class="q"><h3>Customer Management</h3><ul>
+      <li>Is engagement/exposure increasing for the low risk customers?</li>
+      <li>Is exposure being controlled for high risk customers?</li>
+    </ul></div>
+    <div class="q"><h3>Collections</h3><ul>
+      <li>What differentiated collection strategy to apply across different customer groups to maximise payments/recovery?</li>
+    </ul></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© Priyadarshi Dutta: Not for circulation without consent</span>
+  <button type="button" class="theme" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+</footer>
+
+<script>
+(function(){
+  var btns = Array.prototype.slice.call(document.querySelectorAll('#toc button'));
+  var secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var nav = document.querySelector('nav.toc');
+  var lockId = null, lockTimer = null;
+
+  function setActive(id){
+    btns.forEach(function(b){
+      var on = b.getAttribute('data-target') === id;
+      b.classList.toggle('active', on);
+      if (on) { try { b.parentNode.scrollLeft = b.offsetLeft - 20; } catch(err){} }
+    });
+  }
+  function currentSection(){
+    var line = nav.getBoundingClientRect().bottom + 24;
+    var id = secs[0].id;
+    secs.forEach(function(s){ if (s.getBoundingClientRect().top <= line) id = s.id; });
+    // at the very bottom of the page, the last section counts as current
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) id = secs[secs.length-1].id;
+    return id;
+  }
+  function onScroll(){
+    if (lockId) {
+      // keep the clicked tab highlighted until scrolling has settled
+      clearTimeout(lockTimer);
+      lockTimer = setTimeout(function(){ lockId = null; }, 180);
+      return;
+    }
+    setActive(currentSection());
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var id = b.getAttribute('data-target');
+      var el = document.getElementById(id);
+      if (!el) return;
+      lockId = id; setActive(id);
+      clearTimeout(lockTimer);
+      lockTimer = setTimeout(function(){ lockId = null; }, 900);
+      el.scrollIntoView({block:'start'});
+    });
+  });
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  onScroll();
+  var root = document.documentElement, key = 'cr-theme';
+  try { var saved = localStorage.getItem(key); if (saved) root.setAttribute('data-theme', saved); } catch(err){}
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var cur = root.getAttribute('data-theme') ||
+      (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(key, next); } catch(err){}
+  });
+})();
+</script>
+</body>
+</html>
